@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dashboard</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-sidebar: #1a1d29;
+        --text-primary: #1a1d29;
+        --text-secondary: #6c757d;
+        --text-sidebar: #ffffff;
+        --border-color: #e9ecef;
+        --card-bg: #ffffff;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.12);
+        --accent: #6366f1;
+        --accent-hover: #4f46e5;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+      }
+
+      [data-theme="dark"] {
+        --bg-primary: #0f1015;
+        --bg-secondary: #1a1d29;
+        --bg-sidebar: #0a0c10;
+        --text-primary: #e4e7eb;
+        --text-secondary: #9ca3af;
+        --text-sidebar: #e4e7eb;
+        --border-color: #2d3139;
+        --card-bg: #1a1d29;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition:
+          background 0.3s ease,
+          color 0.3s ease;
+      }
+
+      .container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: var(--bg-sidebar);
+        color: var(--text-sidebar);
+        padding: 30px 0;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sidebar.collapsed {
+        width: 80px;
+      }
+
+      .sidebar-header {
+        padding: 0 30px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .sidebar.collapsed .logo-text {
+        display: none;
+      }
+
+      .toggle-sidebar {
+        background: none;
+        border: none;
+        color: var(--text-sidebar);
+        cursor: pointer;
+        font-size: 20px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background 0.3s;
+      }
+
+      .toggle-sidebar:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 0 15px;
+      }
+
+      .nav-item {
+        margin-bottom: 5px;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 15px;
+        color: var(--text-sidebar);
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s;
+        font-size: 15px;
+        opacity: 0.8;
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+      }
+
+      .nav-link.active {
+        background: var(--accent);
+        opacity: 1;
+      }
+
+      .nav-icon {
+        font-size: 20px;
+        width: 20px;
+      }
+
+      .sidebar.collapsed .nav-text {
+        display: none;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+      }
+
+      .sidebar.collapsed ~ .main-content {
+        margin-left: 80px;
+      }
+
+      /* Header */
+      .header {
+        background: var(--card-bg);
+        padding: 25px 40px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        transition: background 0.3s ease;
+      }
+
+      .header-left h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+
+      .header-subtitle {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      /* Dark Mode Toggle */
+      .theme-toggle {
+        width: 60px;
+        height: 32px;
+        background: var(--border-color);
+        border-radius: 20px;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .theme-toggle:hover {
+        background: var(--text-secondary);
+      }
+
+      .theme-toggle-slider {
+        width: 26px;
+        height: 26px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      [data-theme="dark"] .theme-toggle {
+        background: var(--accent);
+      }
+
+      [data-theme="dark"] .theme-toggle-slider {
+        transform: translateX(28px);
+        background: var(--bg-sidebar);
+      }
+
+      .search-bar {
+        position: relative;
+      }
+
+      .search-bar input {
+        padding: 10px 40px 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        width: 300px;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .search-bar input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 10px;
+        transition: background 0.3s;
+      }
+
+      .user-profile:hover {
+        background: var(--bg-secondary);
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--info));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      /* Content Area */
+      .content {
+        padding: 40px;
+      }
+
+      /* Stats Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .stat-title {
+        color: var(--text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .stat-icon.primary {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--accent);
+      }
+
+      .stat-icon.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .stat-icon.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+
+      .stat-icon.danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+
+      .stat-change {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .stat-change.positive {
+        color: var(--success);
+      }
+
+      .stat-change.negative {
+        color: var(--danger);
+      }
+
+      /* Charts Section */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .chart-card {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+      }
+
+      .chart-header {
+        margin-bottom: 25px;
+      }
+
+      .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .chart-subtitle {
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      .chart-placeholder {
+        height: 300px;
+        background: var(--bg-secondary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      /* Table */
+      .table-card {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: var(--bg-secondary);
+      }
+
+      th {
+        padding: 15px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 15px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      tbody tr {
+        transition: background 0.2s;
+      }
+
+      tbody tr:hover {
+        background: var(--bg-secondary);
+      }
+
+      .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .status-badge.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .status-badge.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+
+      .status-badge.danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .header {
+          padding: 20px;
+        }
+
+        .search-bar input {
+          width: 200px;
+        }
+
+        .content {
+          padding: 20px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <span class="logo-text">Dashboard</span>
+          </div>
+          <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Overview</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <span class="nav-icon">📈</span>
+              <span class="nav-text">Analytics</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <span class="nav-icon">💰</span>
+              <span class="nav-text">Revenue</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <span class="nav-icon">👥</span>
+              <span class="nav-text">Customers</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <span class="nav-icon">📦</span>
+              <span class="nav-text">Products</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-text">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+          <div class="header-left">
+            <h1>Dashboard Overview</h1>
+            <p class="header-subtitle">
+              Welcome back! Here's what's happening today.
+            </p>
+          </div>
+          <div class="header-right">
+            <div class="search-bar">
+              <input type="text" placeholder="Search..." />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div class="theme-toggle" onclick="toggleTheme()">
+              <div class="theme-toggle-slider">
+                <span id="theme-icon">☀️</span>
+              </div>
+            </div>
+            <div class="user-profile">
+              <div class="user-avatar">JD</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="content">
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Total Revenue</span>
+                <div class="stat-icon primary">💵</div>
+              </div>
+              <div class="stat-value">$45,231</div>
+              <div class="stat-change positive">↑ 12.5% from last month</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">New Customers</span>
+                <div class="stat-icon success">👥</div>
+              </div>
+              <div class="stat-value">1,284</div>
+              <div class="stat-change positive">↑ 8.2% from last month</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Total Orders</span>
+                <div class="stat-icon warning">📦</div>
+              </div>
+              <div class="stat-value">3,567</div>
+              <div class="stat-change negative">↓ 3.1% from last month</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Conversion Rate</span>
+                <div class="stat-icon danger">📊</div>
+              </div>
+              <div class="stat-value">3.24%</div>
+              <div class="stat-change positive">↑ 0.4% from last month</div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">Revenue Overview</h3>
+                <p class="chart-subtitle">
+                  Monthly revenue for the past 6 months
+                </p>
+              </div>
+              <div class="chart-placeholder">
+                Chart Area (Integrate Chart.js or similar)
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">Traffic Sources</h3>
+                <p class="chart-subtitle">Distribution of visitor sources</p>
+              </div>
+              <div class="chart-placeholder">Pie Chart Area</div>
+            </div>
+          </div>
+
+          <!-- Recent Orders Table -->
+          <div class="table-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Recent Orders</h3>
+              <p class="chart-subtitle">Latest transactions from your store</p>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#ORD-001</td>
+                  <td>John Smith</td>
+                  <td>Premium Package</td>
+                  <td>$299.00</td>
+                  <td><span class="status-badge success">Completed</span></td>
+                  <td>Apr 11, 2026</td>
+                </tr>
+                <tr>
+                  <td>#ORD-002</td>
+                  <td>Emma Wilson</td>
+                  <td>Basic Plan</td>
+                  <td>$99.00</td>
+                  <td><span class="status-badge warning">Processing</span></td>
+                  <td>Apr 11, 2026</td>
+                </tr>
+                <tr>
+                  <td>#ORD-003</td>
+                  <td>Michael Brown</td>
+                  <td>Enterprise Suite</td>
+                  <td>$799.00</td>
+                  <td><span class="status-badge success">Completed</span></td>
+                  <td>Apr 10, 2026</td>
+                </tr>
+                <tr>
+                  <td>#ORD-004</td>
+                  <td>Sarah Davis</td>
+                  <td>Starter Kit</td>
+                  <td>$49.00</td>
+                  <td><span class="status-badge danger">Cancelled</span></td>
+                  <td>Apr 10, 2026</td>
+                </tr>
+                <tr>
+                  <td>#ORD-005</td>
+                  <td>James Miller</td>
+                  <td>Pro Package</td>
+                  <td>$199.00</td>
+                  <td><span class="status-badge success">Completed</span></td>
+                  <td>Apr 9, 2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Dark Mode Toggle
+      function toggleTheme() {
+        const html = document.documentElement;
+        const themeIcon = document.getElementById("theme-icon");
+        const currentTheme = html.getAttribute("data-theme");
+
+        if (currentTheme === "dark") {
+          html.setAttribute("data-theme", "light");
+          themeIcon.textContent = "☀️";
+          localStorage.setItem("theme", "light");
+        } else {
+          html.setAttribute("data-theme", "dark");
+          themeIcon.textContent = "🌙";
+          localStorage.setItem("theme", "dark");
+        }
+      }
+
+      // Load saved theme
+      window.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        const themeIcon = document.getElementById("theme-icon");
+
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        themeIcon.textContent = savedTheme === "dark" ? "🌙" : "☀️";
+      });
+
+      // Sidebar Toggle
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+      }
+
+      // Active Navigation
+      const navLinks = document.querySelectorAll(".nav-link");
+      navLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          navLinks.forEach((l) => l.classList.remove("active"));
+          this.classList.add("active");
+        });
+      });
+
+      // Mobile sidebar toggle
+      window.addEventListener("resize", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (window.innerWidth > 768) {
+          sidebar.classList.remove("active");
+        }
+      });
+    </script>
+  </body>
+</html>
