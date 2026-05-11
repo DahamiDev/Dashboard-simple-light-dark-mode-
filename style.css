@@ -6,7 +6,7 @@
 }
 
 :root {
-  --bg-primary: #ffffff;
+  --bg-primary: #ffffff; , #000000
   --bg-secondary: #f8f9fa;
   --bg-sidebar: #1a1d29;
   --text-primary: #1a1d29;
