@@ -11,7 +11,7 @@
   --bg-sidebar: #1a1d29;
   --text-primary: #1a1d29;
   --text-secondary: #6c757d;
-  --text-sidebar: #ffffff;
+  --text-sidebar: #ffff;
   --border-color: #e9ecef;
   --card-bg: #ffffff;
   --shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
@@ -50,7 +50,7 @@ body {
 /* Import Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap");
 
-/* ---------- CONTAINER & SIDEBAR ---------- */
+/* --- CONTAINER & SIDEBAR --- */
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
